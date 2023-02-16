@@ -36,8 +36,7 @@ python setup.py install
 
 If slims_username, slims_password, and slims_url are not provided as environmental variables, they can be passed in as parameters to the [SlimsConnector](src/onehealthintegration/slims.py#L15) class. If environment_type is not provided as an environmental variable, development mode will be assumed by default.
 
-4. You can now import the onehealthintegration package in your Python scripts:
-
+4. You can now import the onehealthintegration package:
 ```
 import onehealthintegration
 ```
