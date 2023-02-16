@@ -31,7 +31,7 @@ python setup.py install
 4. Set environmental variables (optional): 
 * slims_username
 * slims_password
-* slims_url
+* slims_url (i.e, https://dxterity.cloud.us.genohm.com/slimsrest)
 * environment_type (i.e., Development, Production) (case insensitive)
 
 If slims_username, slims_password, and slims_url are not provided as environmental variables, they can be passed in as parameters to the [SlimsConnector](src/onehealthintegration/slims.py#L15) class. If environment_type is not provided as an environmental variable, development mode will be assumed by default.
