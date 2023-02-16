@@ -5,7 +5,6 @@ from onehealthintegration.slims import SlimsConnector
 slims_connector = SlimsConnector(requisition=None, verbose=True)
 
 # Step - Load requisition data
-slims_connector.requisition = {}
 slims_connector.load_requisition_from_file("../testdata/requisition_3066253.txt")
 
 # Step - Create SLIMS order
