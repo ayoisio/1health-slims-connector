@@ -1,11 +1,12 @@
 import json
 from onehealthintegration.slims import SlimsConnector
 
-# Step - Get example requisition
-with open("testdata/requisition_3066253.txt") as requisition_file:
-  example_requisition = json.load(requisition_file)
+# Step - Create SlimsConnector instance
+slims_connector = SlimsConnector(requisition=None, verbose=True)
 
-slims_connector = SlimsConnector(requisition=example_requisition, verbose=True)
+# Step - Load requisition data
+slims_connector.requisition = {}
+slims_connector.load_requisition_from_file("testdata/requisition_3066253.txt")
 
 # Step - Create SLIMS order
 slims_connector.create_slims_order(auto_link_samples=True)
