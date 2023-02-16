@@ -4,6 +4,9 @@ Package and supporting functions for:
 * Pushing results from SLIMS to 1health
 
 
+## Requirements
+Python >=3.9
+
 ## Installation
 
 To use the onehealthintegration package, follow these steps:
