@@ -60,6 +60,14 @@ class SlimsConnector:
     self.requisition = requisition
     self.verbose = verbose
 
+  def load_requisition_from_file(self, file_path: str) -> None:
+
+    # Read requisition file (json format)
+    with open(file_path) as requisition_file:
+      requisition = json.load(requisition_file)
+
+    self.requisition = requisition
+
   def get_order_name_from_requisition_id(self) -> str:
 
     # determine order name
@@ -72,10 +80,9 @@ class SlimsConnector:
   def create_slims_order(self, auto_link_samples: bool = False) -> None:
 
     # get matching order type
-    order_type_name = self.slims_1health_order_type_lab_code_map.get(
-      self.requisition["order"]["tests"][0]["labCode"])
-    order_type = self.slims.fetch("OrderType",
-                                  equals("rdtp_name", order_type_name))
+    lab_code = self.requisition["order"]["tests"][0]["labCode"]
+    order_type_name = self.slims_1health_order_type_lab_code_map.get(lab_code)
+    order_type = self.slims.fetch("OrderType", equals("rdtp_name", order_type_name))
 
     if not order_type:
       raise Exception(f'No order type found matching "{order_type_name}"')
@@ -90,8 +97,7 @@ class SlimsConnector:
       "ordr_plannedOnDate": order_date.strftime("%m/%d/%Y"),
       "ordr_plannedOnTime": order_date.strftime("%H:%M"),
       "ordr_cf_ofSpecimens": len(self.requisition['samples']),
-      "ordr_cf_distributionType":
-      "1health"  # TODO: Check for better option / not included in requisition (e.g. Fedex)
+      "ordr_cf_distributionType": "1health"  # TODO: Check for better option / not included in requisition (e.g. Fedex)
     }
 
     # create new order
@@ -110,14 +116,11 @@ class SlimsConnector:
     for sample in self.requisition['samples']:
 
       # get matching content type
-      content_type_name = self.slims_1health_content_type_specimen_map.get(
-        sample["snomedConceptCode"]["name"])
-      content_type = self.slims.fetch("ContentType",
-                                      equals("cntp_name", content_type_name))
+      content_type_name = self.slims_1health_content_type_specimen_map.get(sample["snomedConceptCode"]["name"])
+      content_type = self.slims.fetch("ContentType", equals("cntp_name", content_type_name))
 
       if not content_type:
-        raise Exception(
-          f'No content type found matching "{content_type_name}"')
+        raise Exception(f'No content type found matching "{content_type_name}"')
 
       # determine new content data
       collection_date = make_utc_from_string(sample["collectionDate"])
@@ -125,10 +128,8 @@ class SlimsConnector:
 
       matching_inbound_shipment = kits_df[
         kits_df.kitKey == sample["collectionBarcode"]].inboundShipment
-      if not matching_inbound_shipment.empty and not pd.isnull(
-          matching_inbound_shipment).all():
-        tracking_number = matching_inbound_shipment[0].get(
-          "masterTrackingNumber")
+      if not matching_inbound_shipment.empty and not pd.isnull(matching_inbound_shipment).all():
+        tracking_number = matching_inbound_shipment[0].get("masterTrackingNumber")
         distribution_type = "1health"  # TODO: Check for better option / not included in requisition (e.g. Fedex)
       else:
         tracking_number = None
@@ -157,9 +158,7 @@ class SlimsConnector:
       })
 
       if self.verbose is True:
-        print(
-          "Content has been successfully created (barcode below) and linked to order:"
-        )
+        print("Content has been successfully created (barcode below) and linked to order:")
         display_field_value(new_sample, ["cntn_barCode"])
 
   def update_slims_order(self, updated_order_data: Dict[str, Any]) -> None:
