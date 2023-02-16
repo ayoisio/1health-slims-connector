@@ -1,5 +1,7 @@
 # 1health-SLIMS-connector
-Class and supporting functions for (a) creating, linking samples, and updating order in SLIMS using 1health order requisition data and (b) pushing results from SLIMS to 1health.
+Package and supporting functions for:
+* Creating, linking samples, and updating orders in SLIMS using requisition data from 1health
+* Pushing results from SLIMS to 1health
 
 
 ## Installation
@@ -25,6 +27,14 @@ python setup.py install
 ```
 
 * This will install the onehealthintegration package and its dependencies.
+
+4. Set environmental variables (optional): 
+* slims_username
+* slims_password
+* slims_url
+* environment_type (i.e., Development, Production) (case insensitive)
+
+If slims_username, slims_password, and slims_url are not provided as environmental variables, they can be passed in as parameters to the [SlimsConnector](src/onehealthintegration/slims.py#L15) class. If environment_type is not provided as an environmental variable, development mode will be assumed by default.
 
 4. You can now import the onehealthintegration package in your Python scripts:
 
