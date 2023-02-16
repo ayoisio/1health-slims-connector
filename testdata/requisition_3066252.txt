@@ -1,0 +1,133 @@
+{
+  "name": "Order 09066196-7179-4a49-b793-c9e22b2db42d",
+  "id": 3066252,
+  "order": {
+    "tests": [
+      {
+        "name": "SARS-CoV-2 (COVID-19) PCR, Spectrum Saliva",
+        "id": 3029655,
+        "labCode": "2002",
+        "isPanel": false,
+        "externalId": "c3c8590e-716f-3950-9352-45e604740bf4"
+      }
+    ],
+    "orderDate": "2023-02-15T12:57:44.035952",
+    "orderingOrganization": {
+      "name": "DxTerity Diagnostics",
+      "id": 3028383,
+      "phone": "n/a",
+      "authCode": "298405",
+      "facilityName": "n/a",
+      "applicationName": "n/a",
+      "npi": "1942206024",
+      "clia": "n/a",
+      "externalId": "82897aaf-7659-30c7-a66a-3eb948bfabbf",
+      "types": [
+        "Lab",
+        "Health Provider",
+        "Go To Market",
+        "Supplier"
+      ],
+      "headquarterAddress": {
+        "city": "n/a",
+        "state": "n/a",
+        "street": "19500 S Rancho Way, Rancho Dominguez, CA 90220, USA",
+        "county": "n/a",
+        "country": "United States",
+        "postalCode": "n/a"
+      }
+    },
+    "receivingOrganization": {
+      "name": "DxTerity Diagnostics",
+      "id": 3028383,
+      "phone": "n/a",
+      "authCode": "298405",
+      "facilityName": "n/a",
+      "applicationName": "n/a",
+      "externalId": "82897aaf-7659-30c7-a66a-3eb948bfabbf",
+      "types": [
+        "Lab",
+        "Health Provider",
+        "Go To Market",
+        "Supplier"
+      ],
+      "headquarterAddress": {
+        "city": "n/a",
+        "state": "n/a",
+        "street": "19500 S Rancho Way, Rancho Dominguez, CA 90220, USA",
+        "county": "n/a",
+        "country": "United States",
+        "postalCode": "n/a"
+      }
+    }
+  },
+  "patient": {
+    "name": "ayo adedeji",
+    "id": 3028571,
+    "sex": "Asked but not answered",
+    "race": "Unknown",
+    "phone": "+1 (626) 251-6859",
+    "email": "theayoad@gmail.com",
+    "lastName": "adedeji",
+    "firstName": "ayo",
+    "ethnicity": "Unknown",
+    "dob": "1995-07-03",
+    "address": {
+      "city": "Los Angeles",
+      "state": "CA",
+      "street": "11849 Mayfield Ave, Los Angeles, CA 90049, USA",
+      "county": "Los Angeles County",
+      "country": "United States",
+      "postalCode": "90049"
+    },
+    "externalId": "3f4265c3-7d49-3fa9-b3ec-95a0536a2b0a"
+  },
+  "payment": {
+    "type": "n/a",
+    "responsibleParty": "n/a",
+    "insurance": []
+  },
+  "attachments": null,
+  "samples": [
+    {
+      "name": "Sample 1ae5e9f0-2f12-4597-904a-42d4ff131750",
+      "id": 3066260,
+      "collectionBarcode": "396AA025",
+      "collectionDate": "2023-02-15T13:01:24.951",
+      "snomedConceptCode": {
+        "id": 67189,
+        "name": "119342007 - Saliva specimen (specimen)",
+        "description": "Saliva specimen (specimen)",
+        "types": [
+          "SNOMED"
+        ],
+        "code": "119342007"
+      },
+      "externalId": "e54cdab5-a563-3adb-b15b-19acf0d29836"
+    }
+  ],
+  "kits": [
+    {
+      "name": "Kit c0f0c92e-7f1c-4970-8dec-1125f7bac5ee",
+      "id": 3066258,
+      "kitKey": "396AA025",
+      "inboundShipment": {
+        "name": "Shipment e6d8cb0b-2dc7-4034-b02e-42bb4b91dfc2",
+        "id": 3066259,
+        "shipmentDirection": "Inbound",
+        "masterTrackingNumber": "FEDEXT-D632-47A7"
+      }
+    }
+  ],
+  "medicalNecessity": [
+    {
+      "consentDate": null,
+      "diagnoseObservationDate": null,
+      "orderingPhysician": null,
+      "diagnosticCodes": [],
+      "askAtOrderEntry": [],
+      "primary": true
+    }
+  ],
+  "externalId": "3e9a2a99-1a04-3372-a1a3-aaed18dc5dc1"
+}

@@ -1,0 +1,146 @@
+{
+  "name": "Order de769b70-e468-4167-984a-8f838853a5ad",
+  "id": 3066253,
+  "order": {
+    "tests": [
+      {
+        "name": "Type-1 Interferon (IFN-1) Gene Expression Assay",
+        "id": 3029662,
+        "labCode": "1001",
+        "isPanel": false,
+        "externalId": "9dfad35c-3361-3071-932b-044c5acc1645"
+      }
+    ],
+    "orderDate": "2023-02-15T12:57:44.035952",
+    "orderingOrganization": {
+      "name": "DxTerity Diagnostics",
+      "id": 3028383,
+      "phone": "n/a",
+      "authCode": "298405",
+      "facilityName": "n/a",
+      "applicationName": "n/a",
+      "npi": "1942206024",
+      "clia": "n/a",
+      "externalId": "82897aaf-7659-30c7-a66a-3eb948bfabbf",
+      "types": [
+        "Lab",
+        "Health Provider",
+        "Go To Market",
+        "Supplier"
+      ],
+      "headquarterAddress": {
+        "city": "n/a",
+        "state": "n/a",
+        "street": "19500 S Rancho Way, Rancho Dominguez, CA 90220, USA",
+        "county": "n/a",
+        "country": "United States",
+        "postalCode": "n/a"
+      }
+    },
+    "receivingOrganization": {
+      "name": "DxTerity Diagnostics",
+      "id": 3028383,
+      "phone": "n/a",
+      "authCode": "298405",
+      "facilityName": "n/a",
+      "applicationName": "n/a",
+      "externalId": "82897aaf-7659-30c7-a66a-3eb948bfabbf",
+      "types": [
+        "Lab",
+        "Health Provider",
+        "Go To Market",
+        "Supplier"
+      ],
+      "headquarterAddress": {
+        "city": "n/a",
+        "state": "n/a",
+        "street": "19500 S Rancho Way, Rancho Dominguez, CA 90220, USA",
+        "county": "n/a",
+        "country": "United States",
+        "postalCode": "n/a"
+      }
+    }
+  },
+  "patient": {
+    "name": "ayo adedeji",
+    "id": 3028571,
+    "sex": "Asked but not answered",
+    "race": "Unknown",
+    "phone": "+1 (626) 251-6859",
+    "email": "theayoad@gmail.com",
+    "lastName": "adedeji",
+    "firstName": "ayo",
+    "ethnicity": "Unknown",
+    "dob": "1995-07-03",
+    "address": {
+      "city": "Los Angeles",
+      "state": "CA",
+      "street": "11849 Mayfield Ave, Los Angeles, CA 90049, USA",
+      "county": "Los Angeles County",
+      "country": "United States",
+      "postalCode": "90049"
+    },
+    "externalId": "3f4265c3-7d49-3fa9-b3ec-95a0536a2b0a"
+  },
+  "payment": {
+    "type": "Invoice",
+    "responsibleParty": "My Organization",
+    "insurance": []
+  },
+  "attachments": null,
+  "samples": [
+    {
+      "name": "Sample ff50869e-0aeb-4987-84d6-80b96b923876",
+      "id": 3066257,
+      "collectionBarcode": "E64C306D",
+      "collectionDate": "2023-02-15T13:00:15.843",
+      "snomedConceptCode": {
+        "id": 66701,
+        "name": "119297000 - Blood specimen (specimen)",
+        "description": "Blood specimen (specimen)",
+        "types": [
+          "SNOMED"
+        ],
+        "code": "119297000"
+      },
+      "externalId": "41da3395-b099-31db-aeed-d3025b82f501"
+    }
+  ],
+  "kits": [
+    {
+      "name": "Kit 27e5eb63-8ed6-4835-a8f4-6984c1528578",
+      "id": 3066255,
+      "kitKey": "E64C306D",
+      "inboundShipment": {
+        "name": "Shipment ea4ee988-405a-460f-a1de-499933d87b70",
+        "id": 3066256,
+        "shipmentDirection": "Inbound",
+        "masterTrackingNumber": "FEDEXT-B048-4600"
+      }
+    }
+  ],
+  "medicalNecessity": [
+    {
+      "consentDate": "2023-02-15T12:58:52.868969",
+      "diagnoseObservationDate": "2023-02-15T12:58:52.868969",
+      "orderingPhysician": {
+        "name": "Jeremy Walker",
+        "id": 2999174,
+        "phone": "+14063120814",
+        "npi": "1841923869",
+        "email": "jwalker@1health.io",
+        "lastName": "Walker",
+        "firstName": "Jeremy",
+        "specialties": null,
+        "jsonMember1hid": null,
+        "externalId": "2c2d4d9e-2964-36f4-b3de-30edb7c665c0"
+      },
+      "diagnosticCodes": [
+        "A00"
+      ],
+      "askAtOrderEntry": [],
+      "primary": true
+    }
+  ],
+  "externalId": "47e56964-44c1-3629-85ec-983090f71954"
+}

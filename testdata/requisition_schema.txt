@@ -1,0 +1,187 @@
+{
+  "attachments": {},
+  "externalId": "string",
+  "id": 0,
+  "kits": [
+    {
+      "id": 0,
+      "inboundShipment": {
+        "id": 0,
+        "masterTrackingNumber": "string",
+        "name": "string",
+        "shipmentDirection": "string"
+      },
+      "kitKey": "string",
+      "name": "string"
+    }
+  ],
+  "medicalNecessity": [
+    {
+      "askAtOrderEntry": [
+        {
+          "question": "string",
+          "response": [
+            "string"
+          ]
+        }
+      ],
+      "consentDate": "2023-02-10T14:39:52.851Z",
+      "diagnoseObservationDate": "2023-02-10T14:39:52.851Z",
+      "diagnosticCodes": [
+        "string"
+      ],
+      "orderingPhysician": {
+        "email": "string",
+        "externalId": "string",
+        "firstName": "string",
+        "id": 0,
+        "jsonMember1hid": "string",
+        "lastName": "string",
+        "name": "string",
+        "npi": "string",
+        "phone": "string",
+        "specialties": [
+          {}
+        ]
+      },
+      "primary": true
+    }
+  ],
+  "name": "string",
+  "order": {
+    "orderDate": "2023-02-10T14:39:52.851Z",
+    "orderingOrganization": {
+      "applicationName": "string",
+      "authCode": "string",
+      "clia": "string",
+      "externalId": "string",
+      "facilityName": "string",
+      "headquarterAddress": {
+        "city": "string",
+        "country": "string",
+        "county": "string",
+        "postalCode": "string",
+        "state": "string",
+        "street": "string"
+      },
+      "id": 0,
+      "name": "string",
+      "npi": "string",
+      "phone": "string",
+      "types": [
+        "string"
+      ]
+    },
+    "receivingOrganization": {
+      "applicationName": "string",
+      "authCode": "string",
+      "externalId": "string",
+      "facilityName": "string",
+      "headquarterAddress": {
+        "city": "string",
+        "country": "string",
+        "county": "string",
+        "postalCode": "string",
+        "state": "string",
+        "street": "string"
+      },
+      "id": 0,
+      "name": "string",
+      "phone": "string",
+      "types": [
+        "string"
+      ]
+    },
+    "tests": [
+      {
+        "externalId": "string",
+        "id": 0,
+        "isPanel": true,
+        "labCode": "string",
+        "name": "string"
+      }
+    ]
+  },
+  "patient": {
+    "address": {
+      "city": "string",
+      "country": "string",
+      "county": "string",
+      "postalCode": "string",
+      "state": "string",
+      "street": "string"
+    },
+    "dob": "2023-02-10",
+    "email": "string",
+    "ethnicity": "string",
+    "externalId": "string",
+    "firstName": "string",
+    "id": 0,
+    "lastName": "string",
+    "name": "string",
+    "phone": "string",
+    "race": "string",
+    "sex": "string"
+  },
+  "payment": {
+    "insurance": [
+      {
+        "company": {
+          "externalId": "string",
+          "id": 0,
+          "naic_mapping_code": "string",
+          "name": "string"
+        },
+        "groupNumber": "string",
+        "policyNumber": "string",
+        "precedence": "string",
+        "relationshipToInsured": "string",
+        "subscriber": {
+          "address": {
+            "city": "string",
+            "country": "string",
+            "county": "string",
+            "postalCode": "string",
+            "state": "string",
+            "street": "string"
+          },
+          "firstName": "string",
+          "id": 0,
+          "lastName": "string",
+          "name": "string",
+          "phoneNumber": "string"
+        }
+      }
+    ],
+    "responsibleParty": "string",
+    "type": "string"
+  },
+  "samples": [
+    {
+      "askAtSampleCollection": [
+        {
+          "question": "string",
+          "response": [
+            "string"
+          ]
+        }
+      ],
+      "collectedBy": "string",
+      "collectionBarcode": "string",
+      "collectionDate": "2023-02-10T14:39:52.851Z",
+      "collectionLocation": "string",
+      "externalId": "string",
+      "id": 0,
+      "name": "string",
+      "snomedConceptCode": {
+        "code": "string",
+        "description": "string",
+        "id": 0,
+        "name": "string",
+        "types": [
+          "string"
+        ]
+      }
+    }
+  ]
+}
