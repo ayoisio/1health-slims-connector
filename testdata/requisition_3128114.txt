@@ -1,0 +1,146 @@
+{
+  "name": "Order 9df846a3-576a-422b-adff-459862a2d8d6",
+  "id": 3128114,
+  "order": {
+    "tests": [
+      {
+        "name": "Type-1 Interferon (IFN-1) Gene Expression Assay",
+        "id": 3029662,
+        "labCode": "1001",
+        "isPanel": false,
+        "externalId": "9dfad35c-3361-3071-932b-044c5acc1645"
+      }
+    ],
+    "orderDate": "2023-02-28T03:27:46.823382",
+    "orderingOrganization": {
+      "name": "DxTerity Diagnostics",
+      "id": 3028383,
+      "phone": "+14247580100",
+      "authCode": "298405",
+      "facilityName": "n/a",
+      "applicationName": "n/a",
+      "npi": "1942206024",
+      "clia": "05D2054007",
+      "externalId": "82897aaf-7659-30c7-a66a-3eb948bfabbf",
+      "types": [
+        "Lab",
+        "Health Provider",
+        "Go To Market",
+        "Supplier"
+      ],
+      "headquarterAddress": {
+        "city": "n/a",
+        "state": "n/a",
+        "street": "19500 S Rancho Way, Rancho Dominguez, CA 90220, USA",
+        "county": "n/a",
+        "country": "United States",
+        "postalCode": "n/a"
+      }
+    },
+    "receivingOrganization": {
+      "name": "DxTerity Diagnostics",
+      "id": 3028383,
+      "phone": "+14247580100",
+      "authCode": "298405",
+      "facilityName": "n/a",
+      "applicationName": "n/a",
+      "externalId": "82897aaf-7659-30c7-a66a-3eb948bfabbf",
+      "types": [
+        "Lab",
+        "Health Provider",
+        "Go To Market",
+        "Supplier"
+      ],
+      "headquarterAddress": {
+        "city": "n/a",
+        "state": "n/a",
+        "street": "19500 S Rancho Way, Rancho Dominguez, CA 90220, USA",
+        "county": "n/a",
+        "country": "United States",
+        "postalCode": "n/a"
+      }
+    }
+  },
+  "patient": {
+    "name": "ayo adedeji",
+    "id": 3028571,
+    "sex": "Asked but not answered",
+    "race": "Unknown",
+    "phone": "+1 (626) 251-6859",
+    "email": "theayoad@gmail.com",
+    "lastName": "adedeji",
+    "firstName": "ayo",
+    "ethnicity": "Unknown",
+    "dob": "1995-07-03",
+    "address": {
+      "city": "Los Angeles",
+      "state": "CA",
+      "street": "11849 Mayfield Ave, Los Angeles, CA 90049, USA",
+      "county": "Los Angeles County",
+      "country": "United States",
+      "postalCode": "90049"
+    },
+    "externalId": "3f4265c3-7d49-3fa9-b3ec-95a0536a2b0a"
+  },
+  "payment": {
+    "type": "Invoice",
+    "responsibleParty": "My Organization",
+    "insurance": []
+  },
+  "attachments": null,
+  "samples": [
+    {
+      "name": "Sample 08ee78c0-4cad-40e0-a992-35696e5df67c",
+      "id": 3128118,
+      "collectionBarcode": "9cd51121",
+      "collectionDate": "2023-02-28T03:29:08.915",
+      "snomedConceptCode": {
+        "id": 66701,
+        "name": "119297000 - Blood specimen (specimen)",
+        "description": "Blood specimen (specimen)",
+        "types": [
+          "SNOMED"
+        ],
+        "code": "119297000"
+      },
+      "externalId": "e6f323cf-6ede-312c-a6e9-03bbeddbbc42"
+    }
+  ],
+  "kits": [
+    {
+      "name": "Kit fac2e5c0-a42d-4424-b263-6904ac26a415",
+      "id": 3128116,
+      "kitKey": "9cd51121",
+      "inboundShipment": {
+        "name": "Shipment e0208358-9afc-42e7-9aa5-675952ed42d7",
+        "id": 3128117,
+        "shipmentDirection": "Inbound",
+        "masterTrackingNumber": "FEDEXT6058F8"
+      }
+    }
+  ],
+  "medicalNecessity": [
+    {
+      "consentDate": "2023-02-28T03:28:05.036396",
+      "diagnoseObservationDate": "2023-02-28T03:28:05.036396",
+      "orderingPhysician": {
+        "name": "Jeremy Walker",
+        "id": 2999174,
+        "phone": "+14063120814",
+        "npi": "1841923869",
+        "email": "jwalker@1health.io",
+        "lastName": "Walker",
+        "firstName": "Jeremy",
+        "specialties": null,
+        "jsonMember1hid": null,
+        "externalId": "2c2d4d9e-2964-36f4-b3de-30edb7c665c0"
+      },
+      "diagnosticCodes": [
+        "A00"
+      ],
+      "askAtOrderEntry": [],
+      "primary": true
+    }
+  ],
+  "externalId": "18f8c158-1685-37c5-91bd-2076af03f73f"
+}
