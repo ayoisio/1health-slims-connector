@@ -240,7 +240,7 @@ class SlimsConnector:
     """Fetch SLIMS results"""
 
     # define result status filter
-    result_status_filter = conjunction()#.add(equals("stts_name", result_status))
+    result_status_filter = conjunction().add(equals("stts_name", result_status))
 
     # at or before timestamp filter
     if at_before_timestamp:
