@@ -229,7 +229,7 @@ class SlimsConnector:
       display_field_value(updated_order, ["ordr_cf_orderName", "ordr_barCode"])
 
   def fetch_slims_results(self, 
-                          result_status: str = "Verified", 
+                          result_status: Optional[str] = "Verified", 
                           order_name: Optional[str] = None,
                           container_id: Optional[str] = None,
                           container_name: Optional[str] = None,
@@ -240,7 +240,11 @@ class SlimsConnector:
     """Fetch SLIMS results"""
 
     # define result status filter
-    result_status_filter = conjunction().add(equals("stts_name", result_status))
+    result_status_filter = conjunction()
+    
+    # result status label filter
+    if result_status:
+      result_status_filter = result_status_filter.add(equals("stts_name", result_status))
 
     # at or before timestamp filter
     if at_before_timestamp:
