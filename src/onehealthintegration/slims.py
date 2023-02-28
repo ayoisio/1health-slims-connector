@@ -1,13 +1,14 @@
 import json
+import datetime as dt
 import os
+import requests
 import pandas as pd
-from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from pprint import pprint
-from slims.criteria import conjunction, equals
+from slims.criteria import *
 from slims.slims import Record, Slims
 from slims.util import display_field_value
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from .utils import make_utc_from_string
 
@@ -20,19 +21,40 @@ class SlimsConnector:
                slims_password: Optional[str] = None,
                slims_1health_order_type_lab_code_map: Dict[str, Any] = None,
                slims_1health_content_type_specimen_map: Dict[str, Any] = None,
+               onehealth_url: Optional[str] = None,
+               onehealth_api_key: Optional[str] = None,
                requisition: Optional[Dict[str, int]] = None,
+               development_flag: str = " (1health Dev)",
                verbose: bool = False):
 
     if not slims_url:
       # https://dxterity.cloud.us.genohm.com/slimsrest
       slims_url = os.environ.get("slims_url")
+    else:
+      self.slims_url = self.slims_url
 
     if not slims_username:
       slims_username = os.environ.get("slims_username")
+    else:
+      self.slims_username = slims_username
 
     if not slims_password:
       slims_password = os.environ.get("slims_password")
 
+    if not onehealth_url:
+      # https://dxterity.cloud.us.genohm.com/slimsrest
+      self.onehealth_url = os.environ.get("onehealth_url")
+    else:
+      self.onehealth_url = onehealth_url
+
+    if self.onehealth_url.endswith('/'):
+      self.onehealth_url = self.onehealth_url[:-1]
+
+    if not onehealth_api_key:
+      self.onehealth_api_key = os.environ.get("1health_api_key")
+    else:
+      self.onehealth_api_key = onehealth_api_key
+      
     # define SLIMS instance
     self.slims = Slims("slims", slims_url, slims_username, slims_password)
 
@@ -57,10 +79,20 @@ class SlimsConnector:
     else:
       self.slims_1health_content_type_specimen_map = {}
 
+    self.development_flag = development_flag
     self.requisition = requisition
     self.verbose = verbose
 
+  def get_clean_1health_order_id(self, order_id: str) -> str:
+    """Get clean 1health order ID"""
+    
+    if os.environ.get("environment_type", "").lower() == "development":
+      order_id = order_id.replace(self.development_flag, "")
+
+    return order_id
+      
   def load_requisition_from_file(self, file_path: str) -> None:
+    """Load requisition from file"""
 
     # Read requisition file (json format)
     with open(file_path) as requisition_file:
@@ -69,20 +101,22 @@ class SlimsConnector:
     self.requisition = requisition
 
   def get_order_name_from_requisition_id(self) -> str:
+    """Get order name from requisition"""
 
     # determine order name
     order_name = str(self.requisition["id"])
     if os.environ.get("environment_type", "").lower() == "development":
-      order_name += " (1health Dev)"
+      order_name += self.development_flag
 
     return order_name
 
   def create_slims_order(self, auto_link_samples: bool = False) -> None:
+    """Create SLIMS order"""
 
     # get matching order type
     lab_code = self.requisition["order"]["tests"][0]["labCode"]
     order_type_name = self.slims_1health_order_type_lab_code_map.get(lab_code)
-    order_type = self.slims.fetch("OrderType", equals("rdtp_name", order_type_name))
+    order_type = self.slims.fetch("OrderType", equals("rdtp_name", order_type_name))[0]
 
     if not order_type:
       raise Exception(f'No order type found matching "{order_type_name}"')
@@ -93,7 +127,7 @@ class SlimsConnector:
 
     new_order_data = {
       "ordr_cf_orderName": order_name,
-      "ordr_fk_orderType": order_type[0].pk(),
+      "ordr_fk_orderType": order_type.pk(),
       "ordr_plannedOnDate": order_date.strftime("%m/%d/%Y"),
       "ordr_plannedOnTime": order_date.strftime("%H:%M"),
       "ordr_cf_ofSpecimens": len(self.requisition['samples']),
@@ -103,31 +137,40 @@ class SlimsConnector:
     # create new order
     new_order = self.slims.add("Order", new_order_data)
 
-    if self.verbose is True:
+    if self.verbose:
       print("Order has been successfully created (barcode below):")
       display_field_value(new_order, ["ordr_barCode"])
 
     # check to auto link samples to order
-    if auto_link_samples is True:
+    if auto_link_samples:
       self.link_samples_to_order(new_order)
 
-  def link_samples_to_order(self, slims_order: Record) -> None:
+  def link_samples_to_order(self, 
+                            slims_order: Record, 
+                            default_status: str = "Received",
+                            default_group: str = "Clinical Lab User") -> None:
+    """Link samples to order"""
 
+    # get matching status
+    status = self.slims.fetch("Status", equals("stts_name", default_status))[0]
+
+    # get matching group
+    group = self.slims.fetch("Groups", equals("grps_groupName", default_group))[0]
+                              
     for sample in self.requisition['samples']:
 
       # get matching content type
       content_type_name = self.slims_1health_content_type_specimen_map.get(sample["snomedConceptCode"]["name"])
-      content_type = self.slims.fetch("ContentType", equals("cntp_name", content_type_name))
+      content_type = self.slims.fetch("ContentType", equals("cntp_name", content_type_name))[0]
 
       if not content_type:
         raise Exception(f'No content type found matching "{content_type_name}"')
-
+      
       # determine new content data
       collection_date = make_utc_from_string(sample["collectionDate"])
       kits_df = pd.DataFrame(self.requisition["kits"])
 
-      matching_inbound_shipment = kits_df[
-        kits_df.kitKey == sample["collectionBarcode"]].inboundShipment
+      matching_inbound_shipment = kits_df[kits_df.kitKey == sample["collectionBarcode"]].inboundShipment
       if not matching_inbound_shipment.empty and not pd.isnull(matching_inbound_shipment).all():
         tracking_number = matching_inbound_shipment[0].get("masterTrackingNumber")
         distribution_type = "1health"  # TODO: Check for better option / not included in requisition (e.g. Fedex)
@@ -136,20 +179,21 @@ class SlimsConnector:
         distribution_type = None
 
       test_name = self.requisition["order"]["tests"][0]["name"]
-      status = self.slims.fetch("Status", equals("stts_name", "Received"))
 
       new_sample_data = {
-        "cntn_fk_contentType": content_type[0].pk(),
+        "cntn_fk_contentType": content_type.pk(),
         "cntn_cf_test": test_name,
         "cntn_cf_tracking": tracking_number,
-        "cntn_barCode": sample["collectionBarcode"],
         "cntn_cf_containerName": sample["collectionBarcode"],
         "cntn_id": sample["collectionBarcode"],
+        "cntn_barCode": sample["collectionBarcode"],
         "cntn_collectionDate": int(collection_date.timestamp() * 1000),
         "cntn_cf_distributionType": distribution_type,
-        "cntn_fk_status": status[0].pk(),
+        "cntn_fk_status": status.pk(),
         "cntn_status": None,
-        "cntp_slimsGeneratesBarcode": False
+        "cntn_fk_group": group.pk(),
+        "cntp_useBarcodeAsId": False,
+        "cntp_slimsGeneratesBarcode": False,
       }
       new_sample = self.slims.add("Content", new_sample_data)
       self.slims.add("OrderContent", {
@@ -157,26 +201,192 @@ class SlimsConnector:
         'rdcn_fk_content': new_sample.pk()
       })
 
-      if self.verbose is True:
-        print("Content has been successfully created (barcode below) and linked to order:")
-        display_field_value(new_sample, ["cntn_barCode"])
+      if self.verbose:
+        print(
+          "Content has been successfully created (barcode below) and linked to order:"
+        )
+        display_field_value(new_sample, ["cntn_cf_containerName", "cntn_barCode"])
 
   def update_slims_order(self, updated_order_data: Dict[str, Any]) -> None:
+    """Update SLIMS order"""
 
     # get order name
     order_name = self.get_order_name_from_requisition_id()
 
-    # fetch order
-    order = self.slims.fetch("Order", equals("ordr_cf_orderName", order_name))
+    # fetch matching orders
+    matching_orders = self.slims.fetch("Order", equals("ordr_cf_orderName", order_name))
 
-    if not order:
+    if not matching_orders:
       raise Exception(f'No order matching name "{order_name}"')
-    elif len(order) > 1:
+    elif len(matching_orders) > 1:
       raise Exception(
         f'More than one order found matching name "{order_name}"')
 
-    updated_order = order[0].update(updated_order_data)
+    updated_order = matching_orders[0].update(updated_order_data)
 
-    if self.verbose is True:
+    if self.verbose:
       print("Order has been successfully updated (barcode below):")
-      display_field_value(updated_order, ["ordr_barCode"])
+      display_field_value(updated_order, ["ordr_cf_orderName", "ordr_barCode"])
+
+  def fetch_slims_results(self, 
+                          result_status: str = "Verified", 
+                          order_name: Optional[str] = None,
+                          container_id: Optional[str] = None,
+                          container_name: Optional[str] = None,
+                          test_label: Optional[str] = None,
+                          at_before_timestamp: Union[str, dt.datetime] = None, 
+                          at_after_timestamp: Union[str, dt.datetime] = None, 
+                          tz: str = None) -> List[Record]:
+    """Fetch SLIMS results"""
+
+    # define result status filter
+    result_status_filter = conjunction()#.add(equals("stts_name", result_status))
+
+    # at or before timestamp filter
+    if at_before_timestamp:
+      at_before_timestamp = make_utc_from_string(str(at_before_timestamp), tz=tz)
+      at_before_timestamp_int = int(at_before_timestamp.timestamp() * 1000)
+      result_status_filter = result_status_filter.add(less_than_or_equal("rslt_modifiedOn", at_before_timestamp_int))
+
+    # at or after timestamp filter
+    if at_after_timestamp:
+      at_after_timestamp = make_utc_from_string(str(at_after_timestamp), tz=tz)
+      at_after_timestamp_int = int(at_after_timestamp.timestamp() * 1000)
+      result_status_filter = result_status_filter.add(greater_than_or_equal("rslt_modifiedOn", at_after_timestamp_int))
+
+    # order name filter
+    if order_name:
+      order = self.slims.fetch("Order", equals("ordr_cf_orderName", order_name))[0]
+      order_contents = self.slims.fetch("OrderContent", equals("rdcn_fk_order", order.pk()))
+      content_pk_list = list(map(lambda content: content.rdcn_fk_content.value, order_contents))
+    else:
+      content_pk_list = []
+
+    # content container id / container name filter
+    filter_contents = False
+    content_filter = conjunction()
+    if container_id:
+      content_filter = content_filter.add(equals("cntn_id", container_id))
+      filter_contents = True
+
+    if container_name:
+      content_filter = content_filter.add(equals("cntn_cf_containerName", container_name))
+      filter_contents = True
+
+    if filter_contents:
+      contents = self.slims.fetch("Content", content_filter)
+      fc_content_pk_list = list(map(lambda content: content.pk(), contents))
+      content_pk_list.extend(fc_content_pk_list)
+      content_pk_list = list(set(content_pk_list))
+      
+    if content_pk_list:
+      result_status_filter = result_status_filter.add(is_one_of("rslt_fk_content", content_pk_list))
+
+    # test label filter
+    if test_label:
+      result_status_filter = result_status_filter.add(equals("test_label", test_label))
+
+    # get results matching filter
+    results = self.slims.fetch("Result", result_status_filter)
+
+    if self.verbose:
+      print(f"{len(results)} result(s) found matching filters")
+  
+    return results
+
+  def submit_slims_results_to_1health(self,
+                                      result_status: str = "Verified",
+                                      order_name: Optional[str] = None,
+                                      container_id: Optional[str] = None,
+                                      container_name: Optional[str] = None,
+                                      test_label: Optional[str] = None,
+                                      accessioning_test_label: str = "Hamilton Accessioning",
+                                      at_before_timestamp: Union[str, dt.datetime] = None, 
+                                      at_after_timestamp: Union[str, dt.datetime] = None, 
+                                      tz: str = None,
+                                      dry_run: bool = False) -> None:
+    """Submit SLIMS results to 1health"""
+
+    # fetch SLIMS results
+    results = self.fetch_slims_results(
+      result_status=result_status,
+      order_name=order_name,
+      container_id=container_id,
+      container_name=container_name,
+      test_label=test_label,
+      at_before_timestamp=at_before_timestamp,
+      at_after_timestamp=at_after_timestamp,
+      tz=tz)
+
+    for result in results:
+      # get matching order and order content
+      content = self.slims.fetch("Content", equals("cntn_pk", result.rslt_fk_content.value))[0]
+      order_content = self.slims.fetch("OrderContent", equals("rdcn_fk_content", result.rslt_fk_content.value))
+
+      # get matching order
+      if order_content:
+        order_content = order_content[0]
+        order = self.slims.fetch("Order", equals("ordr_pk", order_content.rdcn_fk_order.value))[0]
+      else:
+        order = None
+
+      # get matching test and result status
+      test = self.slims.fetch("Test", equals("test_pk", result.rslt_fk_test.value))[0]
+      result_status = self.slims.fetch("Status", equals("stts_pk", result.rslt_fk_status.value))[0]
+
+      # get accession date
+      accession_result_filter = conjunction().add(equals("rslt_fk_content", content.pk()))
+      accession_result_filter = accession_result_filter.add(equals("test_label", accessioning_test_label))
+      accession_result = self.slims.fetch("Result", accession_result_filter)
+
+      if accession_result:
+        accession_date = accession_result[0].rslt_createdOn.value
+        accession_date = dt.datetime.utcfromtimestamp(accession_date / 1000).strftime("%Y-%m-%dT%H:%M:%S.%f")
+      else:
+        accession_date = None
+
+      # determine processed date
+      processed_date = dt.datetime.utcfromtimestamp(result.rslt_modifiedOn.value / 1000).strftime("%Y-%m-%dT%H:%M:%S.%f")
+
+      # create requisition result paylaod
+      requisition_result = {
+        "accessionDate": accession_date,
+        "processedDate": processed_date,
+        "results": [
+          {
+            "name": result.test_label.value,
+            "resultType": result.test_label.value,
+            "notes": result_status.stts_name.value,
+            "value": str(result.rslt_value.value)
+          }
+        ]
+      }
+
+      if self.verbose:
+        print("requisition_result:")
+        pprint(requisition_result)
+
+      # submit result to 1health
+      if not dry_run:
+        order_id = order.ordr_cf_orderName.value
+        self.submit_result_to_1health(order_id, requisition_result)
+
+  def submit_result_to_1health(self, order_id: str, requisition_result: dict) -> None:
+    """Submit result to 1health"""
+
+    # get clean 1health order ID
+    order_id = self.get_clean_1health_order_id(order_id)
+    
+    # define upsert result 1health endpoint
+    upsert_result_url = self.onehealth_url
+    upsert_result_url += f"/api/v2/health/order/{order_id}/test-result"
+
+    # submit result
+    headers = {"Authorization": f"Bearer {self.onehealth_api_key}"}
+    response = requests.post(upsert_result_url, json=requisition_result, headers=headers)
+
+    if not response.ok:
+      raise Exception(f"Error occurred while submitting result:\n {response.text}")
+
+    if self.verbose:
+      print(f'Result was successfully submitted for "{order_id}" ({response.status_code})')
