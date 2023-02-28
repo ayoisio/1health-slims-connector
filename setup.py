@@ -23,9 +23,13 @@ CLASSIFIERS = [
   "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
 ]
 INSTALL_REQUIRES = [
-  "slims-python-api>=6.8.0,<6.9.0", "numpy>=1.24.2,<1.25.0",
-  "pandas>=1.5.3,<1.6.0", "python-dateutil>=2.8.2,<2.9.0",
-  "pytz>=2022.7.1,<2022.8.0", "urllib3>=1.26.14,<1.27.0"
+  "slims-python-api>=6.8.0,<6.9.0", 
+  "numpy>=1.24.2,<1.25.0",
+  "pandas>=1.5.3,<1.6.0",
+  "python-dateutil>=2.8.2,<2.9.0",
+  "pytz>=2022.7.1,<2022.8.0", 
+  "requests>=2.28.2,<2.29.0",
+  "urllib3>=1.26.14,<1.27.0"
 ]
 
 ###############################################################################
