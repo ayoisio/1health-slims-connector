@@ -229,7 +229,7 @@ class SlimsConnector:
       display_field_value(updated_order, ["ordr_cf_orderName", "ordr_barCode"])
 
   def fetch_slims_results(self, 
-                          result_status: Optional[str] = "Verified", 
+                          result_status: Optional[str] = "Validated", 
                           order_name: Optional[str] = None,
                           container_id: Optional[str] = None,
                           container_name: Optional[str] = None,
@@ -299,7 +299,6 @@ class SlimsConnector:
     return results
 
   def submit_slims_results_to_1health(self,
-                                      result_status: str = "Verified",
                                       order_name: Optional[str] = None,
                                       container_id: Optional[str] = None,
                                       container_name: Optional[str] = None,
@@ -313,7 +312,7 @@ class SlimsConnector:
 
     # fetch SLIMS results
     results = self.fetch_slims_results(
-      result_status=result_status,
+      result_status="Validated",
       order_name=order_name,
       container_id=container_id,
       container_name=container_name,
