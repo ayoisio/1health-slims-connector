@@ -458,13 +458,12 @@ class SlimsConnector:
                 accession_date = None
 
             # determine processed date
-            processed_date = dt.datetime.utcfromtimestamp(result.rslt_modifiedOn.value / 1000).strftime(
-                "%Y-%m-%dT%H:%M:%S.%f")
+            pr_date = dt.datetime.utcfromtimestamp(result.rslt_modifiedOn.value / 1000).strftime("%Y-%m-%dT%H:%M:%S.%f")
 
-            # create requisition result paylaod
+            # create 1health test result payload
             onehealth_test_result = {
                 "accessionDate": accession_date,
-                "processedDate": processed_date,
+                "processedDate": pr_date,
                 "results": [
                     {
                         "name": result.test_label.value,
@@ -476,7 +475,7 @@ class SlimsConnector:
             }
 
             if self.verbose:
-                print("1health_test_result:")
+                print("1health test result:")
                 pprint(onehealth_test_result)
 
             # submit result to 1health
@@ -484,13 +483,13 @@ class SlimsConnector:
                 order_id = order.ordr_cf_orderName.value
                 self.submit_result_to_1health(order_id, onehealth_test_result)
 
-    def submit_result_to_1health(self, order_id: str, onehealth_test_result: dict) -> None:
+    def submit_result_to_1health(self, order_id: str, test_result: dict) -> None:
         """
         Submit result to 1health
 
         Args:
             order_id: SLIMS order name or 1health order ID (e.g. 3128114)
-            onehealth_test_result: Dictionary with 1health result keys and values
+            test_result: Dictionary with 1health result keys and values
 
         Returns:
             None
@@ -505,7 +504,7 @@ class SlimsConnector:
 
         # submit result
         headers = {"Authorization": f"Bearer {self.onehealth_api_key}"}
-        response = requests.post(upsert_result_url, json=onehealth_test_result, headers=headers)
+        response = requests.post(upsert_result_url, json=test_result, headers=headers)
 
         if not response.ok:
             raise Exception(f"Error occurred while submitting result:\n {response.text}")
