@@ -30,11 +30,12 @@ class SlimsConnector:
         Initializes a new instance of SlimsConnector class
 
         Args:
-            slims_url: SLIMS REST endpoint
+            slims_url: SLIMS REST API base URL (e.g. https://dxterity.cloud.us.genohm.com/slimsrest)
             slims_username: SLIMS username
             slims_password: SLIMS password
             slims_1health_order_type_lab_code_map: Dictionary that maps 1health lab code to SLIMS order type
             slims_1health_content_type_specimen_map: Dictionary that maps 1health specimen code to SLIMS content type
+            onehealth_url: 1health REST API base URL (e.g. https://demo.1health.io)
             onehealth_api_key: 1health API Key
             requisition: 1health order requisition data
             development_flag: Development or production mode
@@ -45,7 +46,6 @@ class SlimsConnector:
         """
 
         if not slims_url:
-            # https://dxterity.cloud.us.genohm.com/slimsrest
             slims_url = os.environ.get("slims_url")
         else:
             self.slims_url = self.slims_url
@@ -59,7 +59,6 @@ class SlimsConnector:
             slims_password = os.environ.get("slims_password")
 
         if not onehealth_url:
-            # https://dxterity.cloud.us.genohm.com/slimsrest
             self.onehealth_url = os.environ.get("onehealth_url")
         else:
             self.onehealth_url = onehealth_url
