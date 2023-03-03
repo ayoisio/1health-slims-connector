@@ -266,7 +266,7 @@ class SlimsConnector:
     def update_slims_order(self,
                            updated_order_data: Optional[dict],
                            order_name: Optional[str] = None,
-                           use_requisition_order_id: bool = True) -> None:
+                           use_requisition_order_id: bool = False) -> None:
         """
         Update SLIMS order
 
@@ -280,7 +280,7 @@ class SlimsConnector:
         """
 
         if not order_name and not use_requisition_order_id:
-            raise Exception("Order ID must be specified or use requisition order ID must be enabled")
+            raise Exception("Order name must be specified or use requisition order ID must be set to True")
         elif order_name and use_requisition_order_id:
             raise Exception("Cannot specify both Order ID and use of requisition order ID")
         elif use_requisition_order_id:
