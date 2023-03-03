@@ -21,4 +21,4 @@ results = slims_connector.fetch_slims_results(result_status="Verified",  contain
 results = slims_connector.fetch_slims_results(result_status="Verified", test_label="IFN-1 Test")
 
 # Step - Fetch and submit results (matching filter(s))
-slims_connector.submit_slims_results_to_1health(result_status="Verified",  container_name="MAF21E31", dry_run=False)
+slims_connector.submit_slims_results_to_1health(container_name="MAF21E31", dry_run=False)
