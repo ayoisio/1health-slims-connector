@@ -132,16 +132,17 @@ class SlimsConnector:
 
         self.requisition = requisition
 
-    def get_order_name_from_requisition_id(self) -> str:
+    def get_slims_formatted_order_name(self, order_name: str) -> str:
         """
-        Get order name from requisition
+        Get SLIMS formatted order name
+
+        Args:
+            order_name: original name to formatted (e.g 3128680)
 
         Returns:
             order_name
         """
 
-        # determine order name
-        order_name = str(self.requisition["id"])
         if os.environ.get("environment_type", "").lower() == "development":
             order_name += self.development_flag
 
@@ -168,7 +169,7 @@ class SlimsConnector:
 
         # determine new order data
         order_date = make_utc_from_string(self.requisition["order"]["orderDate"])
-        order_name = self.get_order_name_from_requisition_id()
+        order_name = self.get_slims_formatted_order_name(str(self.requisition["id"]))
 
         new_order_data = {
             "ordr_cf_orderName": order_name,
@@ -285,7 +286,7 @@ class SlimsConnector:
             raise Exception("Cannot specify both Order ID and use of requisition order ID")
         elif use_requisition_order_id:
             # get order name from requisition ID
-            order_name = self.get_order_name_from_requisition_id()
+            order_name = self.get_slims_formatted_order_name(str(self.requisition["id"]))
 
         # fetch matching orders
         matching_orders = self.slims.fetch("Order", equals("ordr_cf_orderName", order_name))
@@ -351,7 +352,11 @@ class SlimsConnector:
 
         # order name filter
         if order_name:
-            order = self.slims.fetch("Order", equals("ordr_cf_orderName", order_name))[0]
+            # get slims formatted order name
+            slims_formatted_order_name = self.get_slims_formatted_order_name(order_name)
+
+            # get order that matches raw or slims formatted order name
+            order = self.slims.fetch("Order", is_one_of("ordr_cf_orderName", [order_name, slims_formatted_order_name]))[0]
             order_contents = self.slims.fetch("OrderContent", equals("rdcn_fk_order", order.pk()))
             content_pk_list = list(map(lambda content: content.rdcn_fk_content.value, order_contents))
         else:
