@@ -8,7 +8,7 @@ slims_connector = SlimsConnector(requisition=None, verbose=True)
 slims_connector.load_requisition_from_file("testdata/requisition_3128114.txt")
 
 # Step - Create SLIMS order
-slims_connector.create_slims_order(auto_link_samples=True)
+slims_connector.create_slims_order(auto_link_samples=True, ignore_if_order_already_exists=False)
 
 # Step - Update SLIMS order
 updated_order_data = {}
