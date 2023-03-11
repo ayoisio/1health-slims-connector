@@ -148,28 +148,36 @@ class SlimsConnector:
 
         return order_name
 
-    def create_slims_order(self, auto_link_samples: bool = False) -> None:
+    def create_slims_order(self, auto_link_samples: bool = False, ignore_if_order_already_exists: bool = False) -> None:
         """
         Create SLIMS order
 
         Args:
             auto_link_samples: Check to link samples after creating order in SLIMS
-
+            ignore_if_order_already_exists: Check to ignore order creation if order (based on order name) already exists
         Returns:
             None
         """
+
+        # determine order name
+        order_name = self.get_slims_formatted_order_name(str(self.requisition["id"]))
 
         # get matching order type
         lab_code = self.requisition["order"]["tests"][0]["labCode"]
         order_type_name = self.slims_1health_order_type_lab_code_map.get(lab_code)
         order_type = self.slims.fetch("OrderType", equals("rdtp_name", order_type_name))[0]
 
+        # check for matching order
+        matching_orders = self.slims.fetch("Order", equals("ordr_cf_orderName", order_name))
+
+        if matching_orders and not ignore_if_order_already_exists:
+          raise Exception(f'Order "{order_name}" already exists')
+      
         if not order_type:
             raise Exception(f'No order type found matching "{order_type_name}"')
 
         # determine new order data
         order_date = make_utc_from_string(self.requisition["order"]["orderDate"])
-        order_name = self.get_slims_formatted_order_name(str(self.requisition["id"]))
 
         new_order_data = {
             "ordr_cf_orderName": order_name,
