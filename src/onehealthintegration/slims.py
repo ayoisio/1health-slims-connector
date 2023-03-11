@@ -356,8 +356,9 @@ class SlimsConnector:
             slims_formatted_order_name = self.get_slims_formatted_order_name(order_name)
 
             # get order that matches raw or slims formatted order name
-            order = self.slims.fetch("Order", is_one_of("ordr_cf_orderName", [order_name, slims_formatted_order_name]))[0]
-            order_contents = self.slims.fetch("OrderContent", equals("rdcn_fk_order", order.pk()))
+            orders = self.slims.fetch("Order", is_one_of("ordr_cf_orderName", [order_name, slims_formatted_order_name]))
+            order_pk_list = list(map(lambda order: order.pk(), orders))
+            order_contents = self.slims.fetch("OrderContent", is_one_of("rdcn_fk_order", order_pk_list))
             content_pk_list = list(map(lambda content: content.rdcn_fk_content.value, order_contents))
         else:
             content_pk_list = []
@@ -480,7 +481,7 @@ class SlimsConnector:
             }
 
             if self.verbose:
-                print("1health test result:")
+                print(f'1health test result for {content.cntn_cf_containerName.value} in order "{order.ordr_cf_orderName.value}":')
                 pprint(onehealth_test_result)
 
             # submit result to 1health
