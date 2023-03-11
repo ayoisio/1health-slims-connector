@@ -160,7 +160,8 @@ class SlimsConnector:
         """
 
         # determine order name
-        order_name = self.get_slims_formatted_order_name(str(self.requisition["id"]))
+        order_name = str(self.requisition["id"])
+        slims_formatted_order_name = self.get_slims_formatted_order_name(order_name)
 
         # get matching order type
         lab_code = self.requisition["order"]["tests"][0]["labCode"]
@@ -168,10 +169,10 @@ class SlimsConnector:
         order_type = self.slims.fetch("OrderType", equals("rdtp_name", order_type_name))[0]
 
         # check for matching order
-        matching_orders = self.slims.fetch("Order", equals("ordr_cf_orderName", order_name))
+        matching_orders = self.slims.fetch("Order", is_one_of("ordr_cf_orderName", [order_name, slims_formatted_order_name]))
 
         if matching_orders and not ignore_if_order_already_exists:
-          raise Exception(f'Order "{order_name}" already exists')
+          raise Exception(f'Order "{slims_formatted_order_name}" already exists')
       
         if not order_type:
             raise Exception(f'No order type found matching "{order_type_name}"')
@@ -180,7 +181,7 @@ class SlimsConnector:
         order_date = make_utc_from_string(self.requisition["order"]["orderDate"])
 
         new_order_data = {
-            "ordr_cf_orderName": order_name,
+            "ordr_cf_orderName": slims_formatted_order_name,
             "ordr_fk_orderType": order_type.pk(),
             "ordr_plannedOnDate": order_date.strftime("%m/%d/%Y"),
             "ordr_plannedOnTime": order_date.strftime("%H:%M"),
@@ -235,13 +236,13 @@ class SlimsConnector:
             collection_date = make_utc_from_string(sample["collectionDate"])
             kits_df = pd.DataFrame(self.requisition["kits"])
 
-            matching_inbound_shipment = kits_df[kits_df.kitKey == sample["collectionBarcode"]].inboundShipment
-            if not matching_inbound_shipment.empty and not pd.isnull(matching_inbound_shipment).all():
-                tracking_number = matching_inbound_shipment[0].get("masterTrackingNumber")
-                distribution_type = "1health"  # TODO: Check for better option / not included in requisition (e.g. Fedex)
-            else:
-                tracking_number = None
-                distribution_type = None
+            tracking_number = None
+            distribution_type = None
+            if "kitKey" in kits_df:
+              matching_inbound_shipment = kits_df[kits_df.kitKey == sample["collectionBarcode"]].inboundShipment
+              if not matching_inbound_shipment.empty and not pd.isnull(matching_inbound_shipment).all():
+                  tracking_number = matching_inbound_shipment[0].get("masterTrackingNumber")
+                  distribution_type = "1health"  # TODO: Check for better option / not included in requisition (e.g. Fedex)
 
             test_name = self.requisition["order"]["tests"][0]["name"]
 
